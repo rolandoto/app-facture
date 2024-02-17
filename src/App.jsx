@@ -7,9 +7,8 @@ import html2canvas from "html2canvas";
 import moment  from 'moment';
 import 'moment/locale/es'; // Importar el idioma español
 
-
-
 const styles = {
+  fontSize: 10,
   fontFamily: "arial",
   textAlign: "center",
   padding: "50px",
@@ -20,7 +19,7 @@ const btnStyle = {
   padding: "10px 20px",
   borderRadius: "5px",
   outline: "none",
-  fontSize: "20px",
+  fontSize: "10px",
 };
 
 // Estilo para el título
@@ -32,7 +31,7 @@ const titleStyle = {
 
 // Estilo para el subtítulo
 const subtitleStyle = {
-  fontSize: 12,
+  fontSize: 25,
   fontStyle: 'normal',
   textColor: 'black',
   fontWeight: '500'
@@ -48,11 +47,22 @@ const bodyStyle = {
 function App() {
   
 
+  const [items, setItems] = useState([]);
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState('');
+  const [userNameCompany, setUserNameCompany] = useState('');
+  const [documentCompany,setSetdocument] =useState("")
+
+
+  const totalReduce = items.reduce((sum,curret) =>{
+    return  sum + curret.price * curret.quantity
+ },0)
+
+ console.log(totalReduce)
+
   // Obtener la fecha actual y formatearla
-  const currentDate = moment().locale("es").format('D [de] MMMM [de] YYYY');
-
-  console.log(currentDate)
-
+  const currentDate = moment().format('D [de] MMMM [de] YYYY');  
     const print = () => {
       const input = document.getElementById("printThis");
      
@@ -60,7 +70,7 @@ function App() {
         format: [500, 1100] // Custom size: width = 500, height = 1100 (in units, default is mm)
       });
 
-      pdf.setFont('helvetica');
+      pdf.setFont('arial');
       html2canvas(input, {scale:0.1}).then((canvas) => {
         
         const imgData = canvas.toDataURL("image/jpeg", 1.0);
@@ -70,36 +80,49 @@ function App() {
           format: [800, 800]
       });
       
-      pdf.setFont('helvetica');
-    
+      pdf.setFont('arial');
       // Título
-      pdf.setTextColor(titleStyle.textColor);
-      pdf.setFontSize(titleStyle.fontSize);
       pdf.setFontStyle(titleStyle.fontStyle);
+      pdf.setFontStyle(btnStyle.fontSize);
       pdf.text(100, 20, `Medellín, ${currentDate}`);
-   
-    
-     
+      pdf.setFontStyle(btnStyle.fontSize);
+      pdf.text(120, 35, userNameCompany);
+      pdf.text(110, 50, `CC: ${documentCompany}`);
+      pdf.text(100, 80, `DEBE A:`);
+      pdf.text(100, 89, `Lewis Alberto Boscan Alcantara`);
+      pdf.text(100, 98, `CC: 1017277701`);
+
+      pdf.text(30, 142, `Concepto`);
+      pdf.text(120, 142, `Valor unitario`);
+      
+      let count  =40
+      items.map((item, index) => {
+      const total =  parseInt(150 + parseInt(index *8))
+      count =total
+         pdf.text(30, total,`${item.quantity} ${item.name}`)
+        pdf.text(120, total,`${parseInt(item.price * item.quantity).toLocaleString()}`)
+      })
+
+
+      const total = count +30
+      const totalFooter = total+10
+
+      pdf.text(30, total, `Valor total  $${parseInt(totalReduce).toLocaleString()}`);
+      pdf.text(30, totalFooter, `Favor consignar a mi cuenta de ahorros Bancolombia 01500005192`);
+      
+
       pdf.save("download.pdf"); // Guarda el PDF
       });
     };
 
-    const [items, setItems] = useState([]);
-    const [name, setName] = useState('');
-    const [price, setPrice] = useState("");
-    const [quantity, setQuantity] = useState('');
-
     const handleAddToCart = () => {
       const cleanedPrice = price.replace(/\./g, '');
-
       const newItem = {
         name: name,
         price: cleanedPrice,
         quantity: parseInt(quantity),
         total: 10000 * parseInt(quantity)
       };
-    
-      
 
       setItems([...items, newItem]);
       // Limpiar los campos después de agregar
@@ -115,18 +138,25 @@ function App() {
     const formattedValue = intValue.toLocaleString('es-CO');
     return formattedValue;
   };
-  
-
-
 
   return (
-    <>
+    <div>
      <div className="cart-container">
      <p>Medellín, {currentDate}</p>
+     <div className="input-container">
+         <label>
+          Nombre de la empresa:
+          <input type="text" value={userNameCompany} onChange={(e) => setUserNameCompany(e.target.value)} />
+        </label>
+        <label>
+        Nit de la empresa o Documento:
+          <input type="text" value={documentCompany} onChange={(e) => setSetdocument(e.target.value)} />
+        </label>
+      </div>
       <h2>Carrito de Compras</h2>
       <div className="input-container">
         <label>
-          Concepto:
+          Descripcion:
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
         </label>
         <label>
@@ -155,14 +185,14 @@ function App() {
       ))}
 </div>
 
-<button onClick={print}>descargar pdf </button>
-<div style={{ position: 'absolute', left: 50, top: -500 }}>
-                <div id="printThis">
-                
+  <button onClick={print}>descargar pdf </button>
+  <div style={{ position: 'absolute', left: 50, top: -500 }}>
+                  <div id="printThis">
+                  
+                  </div>
                 </div>
-              </div>
-    </div>
-    </>
+      </div>
+      </div>
   )
 }
 
