@@ -100,7 +100,7 @@ function App() {
       const total =  parseInt(150 + parseInt(index *8))
       count =total
          pdf.text(30, total,`${item.quantity} ${item.name}`)
-        pdf.text(200, total,`${parseInt(item.price * item.quantity).toLocaleString()}`)
+        pdf.text(200, total,`${parseInt(item.price).toLocaleString()}`)
       })
 
 
