@@ -1,11 +1,15 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import jsPDF from "jspdf"; 
 import html2canvas from "html2canvas";
-import moment  from 'moment';
-import 'moment/locale/es'; // Importar el idioma español
+import moment from 'moment';
+import 'moment/locale/es'; // Importa el idioma español
+import { v4 as uuidv4 } from 'uuid';
+import { MdDeleteOutline } from "react-icons/md";
+import {Toaster, toast } from 'sonner'
+
 
 const styles = {
   fontSize: 10,
@@ -46,6 +50,7 @@ const bodyStyle = {
 
 function App() {
   
+  const id = uuidv4();
 
   const [items, setItems] = useState([]);
   const [name, setName] = useState('');
@@ -55,15 +60,23 @@ function App() {
   const [documentCompany,setSetdocument] =useState("")
 
 
-  const totalReduce = items.reduce((sum,curret) =>{
-    return  sum + curret.price * curret.quantity
- },0)
+    const totalReduce = items.reduce((sum,curret) =>{
+      return  sum + curret.price * curret.quantity
+  },0)
+  
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const currentDate = new Date().toLocaleDateString('es-ES', options);
 
- console.log(totalReduce)
 
-  // Obtener la fecha actual y formatearla
-  const currentDate = moment().format('D [de] MMMM [de] YYYY');  
+    const requiredValidator = (value) => {
+      // Verificar si el valor está vacío o es null/undefined
+      return !(value === '' || value === null || value === undefined);
+    };
+
     const print = () => {
+      if(items.length ==0) {
+        toast.error('por favor agrega un producto')
+      }else{
       const input = document.getElementById("printThis");
      
       const pdf = new jsPDF({
@@ -113,22 +126,28 @@ function App() {
 
       pdf.save("download.pdf"); // Guarda el PDF
       });
+    }
     };
 
     const handleAddToCart = () => {
-      const cleanedPrice = price.replace(/\./g, '');
-      const newItem = {
-        name: name,
-        price: cleanedPrice,
-        quantity: parseInt(quantity),
-        total: 10000 * parseInt(quantity)
-      };
-
-      setItems([...items, newItem]);
-      // Limpiar los campos después de agregar
-      setName('');
-      setPrice('');
-      setQuantity('');
+      if(requiredValidator(name) && requiredValidator(price)&& requiredValidator(quantity) ){
+        const cleanedPrice = price.replace(/\./g, '');
+        const newItem = {
+          id,
+          name: name,
+          price: cleanedPrice,
+          quantity: parseInt(quantity),
+          total: 10000 * parseInt(quantity)
+        };
+  
+        setItems([...items, newItem]);
+        // Limpiar los campos después de agregar
+        setName('');
+        setPrice('');
+        setQuantity('');
+      }else{
+        toast.error('por favor completa todos los formularios')
+      }
     };
 
   const numberWithCommas = (value) => {
@@ -139,8 +158,17 @@ function App() {
     return formattedValue;
   };
 
+
+  const eliminarProducto = (productoAEliminar) => {
+    setItems(prevItems => prevItems.filter(item => item.id !== productoAEliminar));
+  };
+
+
+  console.log(items)
+
   return (
     <div>
+       <Toaster richColors />
      <div className="cart-container">
      <p>Medellín, {currentDate}</p>
      <div className="input-container">
@@ -150,7 +178,7 @@ function App() {
         </label>
         <label>
         Nit de la empresa o Documento:
-          <input type="text" value={documentCompany} onChange={(e) => setSetdocument(e.target.value)} />
+          <input type="number" value={documentCompany} onChange={(e) => setSetdocument(e.target.value)} />
         </label>
       </div>
       <h2>Carrito de Compras</h2>
@@ -172,7 +200,7 @@ function App() {
           Cantidad:
           <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
         </label>
-        <button onClick={handleAddToCart}>Agregar al Carrito</button>
+        <button onClick={handleAddToCart} className='button-add' >Agregar al Carrito</button>
       </div>
       <div className="items-container">
       {items.map((item, index) => (
@@ -181,11 +209,13 @@ function App() {
           <p>Precio: ${parseInt(item.price).toLocaleString()}</p>
           <p>Cantidad: {item.quantity}</p>
           <p>Total: ${parseInt(item.price * item.quantity).toLocaleString()}</p>
+          <MdDeleteOutline color='red' fontSize={34} style={{cursor:"pointer"}} onClick={() =>eliminarProducto(item.id)} />
+
         </div>
       ))}
-</div>
+    </div>
 
-  <button onClick={print}>descargar pdf </button>
+  <button onClick={print} className='button-download-pdf' >descargar pdf </button>
   <div style={{ position: 'absolute', left: 50, top: -500 }}>
                   <div id="printThis">
                   

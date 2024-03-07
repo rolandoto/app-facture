@@ -78,3 +78,37 @@
 .item p {
   margin: 5px 0;
 }
+
+
+
+.button-add{
+  padding: 13px;
+  width: 10%;
+    border-radius: 8px;
+    border: none;
+    background: white;
+    cursor: pointer;
+    color: black;
+    animation: 4s;
+    transition: 1s;
+}
+
+.button-download-pdf{
+  padding: 13px;
+  width: 10%;
+    border-radius: 8px;
+    border: none;
+    background: #f21361;
+    cursor: pointer;
+    color: white;
+    animation: 4s;
+    transition: 1s;
+}
+
+.button-add:hover{
+  background:rgb(143, 143, 143);
+}
+
+.button-download-pdf:hover{
+  background:#b62f5e;
+}
