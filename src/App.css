@@ -83,7 +83,6 @@
 
 .button-add{
   padding: 13px;
-  width: 10%;
     border-radius: 8px;
     border: none;
     background: white;
@@ -95,7 +94,6 @@
 
 .button-download-pdf{
   padding: 13px;
-  width: 10%;
     border-radius: 8px;
     border: none;
     background: #f21361;
