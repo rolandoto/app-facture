@@ -121,7 +121,7 @@ function App() {
       const totalFooter = total+10
 
       pdf.text(30, total, `Valor total  $${parseInt(totalReduce).toLocaleString()}`);
-      pdf.text(30, totalFooter, `Favor consignar a mi cuenta de ahorros Bancolombia 134200005004`);
+      pdf.text(30, totalFooter, `Favor consignar a mi cuenta de ahorros Bancolombia 34200005004`);
       
       pdf.save("download.pdf"); // Guarda el PDF
       });
