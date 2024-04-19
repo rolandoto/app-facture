@@ -102,8 +102,8 @@ function App() {
       pdf.text(120, 35, userNameCompany);
       pdf.text(110, 50, `CC: ${documentCompany}`);
       pdf.text(100, 80, `DEBE A:`);
-      pdf.text(100, 89, `Lewis Alberto Boscan Alcantara`);
-      pdf.text(100, 98, `CC: 1017277701`);
+      pdf.text(100, 89, `Edilberto jose boscan alcantara`);
+      pdf.text(100, 98, `CC: 1017277279`);
 
       pdf.text(30, 142, `Concepto`);
       pdf.text(200, 142, `Valor unitario`);
@@ -121,9 +121,8 @@ function App() {
       const totalFooter = total+10
 
       pdf.text(30, total, `Valor total  $${parseInt(totalReduce).toLocaleString()}`);
-      pdf.text(30, totalFooter, `Favor consignar a mi cuenta de ahorros Bancolombia 01500005192`);
+      pdf.text(30, totalFooter, `Favor consignar a mi cuenta de ahorros Bancolombia 134200005004`);
       
-
       pdf.save("download.pdf"); // Guarda el PDF
       });
     }
